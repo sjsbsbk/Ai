@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { Readable } from "node:stream";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,13 +20,11 @@ const BASE_URL = (
   "https://freellmapi-production-ae0b.up.railway.app/v1"
 ).replace(/\/$/, "");
 
-// مدل پیش‌فرض روی auto
-const DEFAULT_MODEL = process.env.DEFAULT_MODEL || "auto";
+// مدل پیش‌فرض روی fusion
+const DEFAULT_MODEL = process.env.DEFAULT_MODEL || "fusion";
 
 /**
  * NEXUS PRO v5 — ADVANCED SYSTEM PROMPT
- * Optimized for Persian-first, code generation, analytical thinking, RAG, and high-fidelity LLM interactions.
- * Developed to guide the LLM to act with maximum clarity, structured reasoning, and high performance.
  */
 const SYSTEM_PROMPT = `You are Nexus (Nexus Pro v5): an elite, state-of-the-art AI assistant specializing in advanced software engineering, rigorous scientific research, complex data analysis, and highly engaging Persian content generation. Your core mission is to provide the most precise, optimized, and practically useful responses possible.
 
@@ -115,18 +114,18 @@ app.post("/api/chat", async (req, res) => {
     const {
       message,
       messages,
-      system, // allow override system prompt per-request
+      system,
       model = DEFAULT_MODEL,
       temperature = 0.7,
       max_tokens = 1500,
       top_p = 1,
-      stream = false
+      stream = false,
+      fusion, // پشتیبانی از فیلد fusion
+      ...extraPayload
     } = req.body || {};
 
     let finalMessages;
-
     if (Array.isArray(messages) && messages.length > 0) {
-      // Ensure system prompt is first
       const hasSystem = messages[0]?.role === "system";
       finalMessages = hasSystem
         ? messages
@@ -141,28 +140,38 @@ app.post("/api/chat", async (req, res) => {
       ];
     }
 
+    const requestBody = {
+      model,
+      messages: finalMessages,
+      temperature,
+      max_tokens,
+      top_p,
+      stream,
+      ...extraPayload
+    };
+
+    if (fusion !== undefined) {
+      requestBody.fusion = fusion;
+    }
+
     const response = await fetch(`${BASE_URL}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${API_KEY}`
       },
-      body: JSON.stringify({
-        model,
-        messages: finalMessages,
-        temperature,
-        max_tokens,
-        top_p,
-        stream
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (stream) {
-      // اگر استریم فعال باشد، پاسخ را مستقیم ارسال می‌کنیم
       res.setHeader("Content-Type", "text/event-stream");
       res.setHeader("Cache-Control", "no-cache");
       res.setHeader("Connection", "keep-alive");
-      response.body.pipe(res);
+      if (response.body) {
+        Readable.fromWeb(response.body).pipe(res);
+      } else {
+        res.end();
+      }
       return;
     }
 
