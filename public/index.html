@@ -1,11 +1,9 @@
-<!-- public/index.html -->
-
 <!doctype html>
 <html lang="fa" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reham AI</title>
+  <title>AI Chat</title>
 
   <style>
     :root {
@@ -14,7 +12,10 @@
       --blue-2: #65c7ff;
       --text: #f6f8ff;
       --muted: rgba(240, 245, 255, 0.62);
+      --glass: rgba(7, 18, 42, 0.72);
+      --glass-2: rgba(4, 11, 28, 0.88);
       --border: rgba(85, 172, 255, 0.28);
+      --danger: #ff6b7a;
     }
 
     * {
@@ -73,13 +74,8 @@
     }
 
     @keyframes aura {
-      from {
-        transform: rotate(-5deg) scale(1);
-      }
-
-      to {
-        transform: rotate(5deg) scale(1.06);
-      }
+      from { transform: rotate(-5deg) scale(1); }
+      to { transform: rotate(5deg) scale(1.06); }
     }
 
     .top-actions {
@@ -174,15 +170,8 @@
     }
 
     @keyframes ringPulse {
-      0%, 100% {
-        filter: brightness(1);
-        transform: scale(1);
-      }
-
-      50% {
-        filter: brightness(1.18);
-        transform: scale(1.012);
-      }
+      0%, 100% { filter: brightness(1); transform: scale(1); }
+      50% { filter: brightness(1.18); transform: scale(1.012); }
     }
 
     .star {
@@ -219,15 +208,8 @@
     }
 
     @keyframes star {
-      0%, 100% {
-        transform: scale(0.85);
-        opacity: 0.78;
-      }
-
-      50% {
-        transform: scale(1.18);
-        opacity: 1;
-      }
+      0%, 100% { transform: scale(0.85); opacity: 0.78; }
+      50% { transform: scale(1.18); opacity: 1; }
     }
 
     .bot {
@@ -295,13 +277,8 @@
       z-index: 3;
     }
 
-    .eye.left {
-      left: 39%;
-    }
-
-    .eye.right {
-      right: 39%;
-    }
+    .eye.left { left: 39%; }
+    .eye.right { right: 39%; }
 
     .lock {
       position: absolute;
@@ -410,15 +387,8 @@
     }
 
     @keyframes pop {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .msg.user {
@@ -468,24 +438,12 @@
       animation: typing 0.9s infinite ease-in-out;
     }
 
-    .typing span:nth-child(2) {
-      animation-delay: 0.14s;
-    }
-
-    .typing span:nth-child(3) {
-      animation-delay: 0.28s;
-    }
+    .typing span:nth-child(2) { animation-delay: 0.14s; }
+    .typing span:nth-child(3) { animation-delay: 0.28s; }
 
     @keyframes typing {
-      0%, 80%, 100% {
-        opacity: 0.35;
-        transform: translateY(0);
-      }
-
-      40% {
-        opacity: 1;
-        transform: translateY(-5px);
-      }
+      0%, 80%, 100% { opacity: 0.35; transform: translateY(0); }
+      40% { opacity: 1; transform: translateY(-5px); }
     }
 
     .composer {
@@ -909,16 +867,12 @@
         typingRow.remove();
 
         if (!response.ok) {
-          const details = data?.details
-            ? JSON.stringify(data.details, null, 2)
-            : JSON.stringify(data, null, 2);
-
+          const details = data?.details ? JSON.stringify(data.details, null, 2) : JSON.stringify(data, null, 2);
           addMessage("assistant", "Error:\n" + details);
           return;
         }
 
         const answer = data.answer || JSON.stringify(data.raw, null, 2);
-
         addMessage("assistant", answer);
         conversation.push({ role: "assistant", content: answer });
       } catch (error) {
@@ -953,5 +907,5 @@
 
     messageInput.focus();
   </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a174b71f2e74d268',t:'MTc4MzQwNDkzMg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
